@@ -4,17 +4,40 @@ from app.graph.base_graph import BaseGraph
 from app.models.message import Message
 from app.tools.chatwoot import ChatwootClient
 from app.utils.logger import setup_logger
+from app.services.message_router import MessageRouter
 
 router = APIRouter()
 logger = setup_logger(__name__)
 
+from app.services.execution_store import get_execution_store
+
 # Initialize graph (singleton or per-request depending on design, here simple singleton)
 agent_graph = BaseGraph()
 chatwoot_client = ChatwootClient()
+store = get_execution_store()
 
 async def process_message_task(message: Message):
+    # Determine workflow name - simpler logic for now
+    router_service = MessageRouter() # Need to init this one
+    workflow_id = await router_service.route(message)
+    
+    # Start execution record
+    exec_id = store.add_execution(
+        client_id=workflow_id, # Using workflow_id as client_id proxy for scaffold
+        workflow_name=workflow_id,
+        input_message=message.content
+    )
+    
     try:
-        response_text = await agent_graph.run(message)
+        response_text, steps = await agent_graph.run(message)
+        
+        # Update execution record
+        store.update_execution(
+            execution_id=exec_id,
+            output_message=response_text,
+            steps=steps
+        )
+        
         # Send back to Chatwoot
         await chatwoot_client.send_message(
             conversation_id=int(message.conversation_id),
@@ -22,6 +45,11 @@ async def process_message_task(message: Message):
         )
     except Exception as e:
         logger.error(f"Error processing message: {e}")
+        store.update_execution(
+            execution_id=exec_id,
+            output_message=f"Error: {str(e)}",
+            steps=[{"error": str(e)}]
+        )
 
 @router.post("/webhook/chatwoot")
 async def chatwoot_webhook(payload: WebhookPayload, background_tasks: BackgroundTasks):
