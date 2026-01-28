@@ -1,0 +1,10 @@
+{
+    "name": "Default Workflow",
+    "steps": [
+        {
+            "id": "step1",
+            "type": "llm",
+            "prompt": "Hello, how can I help you?"
+        }
+    ]
+}

@@ -1,0 +1,21 @@
+from fastapi import FastAPI
+from app.config.settings import get_settings
+from app.api import webhook_controller, healthcheck
+from app.utils.logger import setup_logger
+
+settings = get_settings()
+logger = setup_logger(__name__)
+
+app = FastAPI(title=settings.APP_NAME)
+
+# Include routers
+app.include_router(webhook_controller.router)
+app.include_router(healthcheck.router)
+
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Starting up Axioma Bot Core...")
+
+@app.get("/")
+async def root():
+    return {"message": "Axioma Bot Core is running"}
