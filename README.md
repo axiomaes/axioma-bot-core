@@ -87,4 +87,32 @@ Se añadieron las abstracciones para proveedores de LLM (OpenAI, Anthropic, Olla
 2026-01-28 – Implementación del Dashboard
 Se desarrolló una interfaz gráfica con React y Vite para la visualización de ejecuciones en tiempo real. Se añadieron nuevos endpoints al backend para exponer datos de ejecuciones, clientes y workflows, además de habilitar CORS. El sistema ahora permite inspeccionar el trazo paso a paso de cada ejecución del agente.
 
+### 2026-01-29 – Plan de trabajo para continuar con el desarrollo
+
+Mañana continuaremos con los siguientes puntos:
+
+1. Probar el workflow de Axioma Creativa desde Chatwoot.
+   - Enviar mensajes reales al inbox asignado.
+   - Verificar que el router selecciona correctamente el workflow.
+   - Confirmar que el agente clasifica la intención y ejecuta los nodos previstos.
+
+2. Visualizar la ejecución en el Dashboard.
+   - Revisar que las trazas aparecen en “Recent Executions”.
+   - Abrir una ejecución y comprobar los pasos del grafo.
+   - Validar que el workflow.json se muestra correctamente en el visor.
+
+3. Ajustar el comportamiento del agente.
+   - Revisar prompts y transiciones según los resultados de las pruebas.
+   - Mejorar la recogida de datos en el nodo `collect_info`.
+   - Validar la integración con la herramienta `create_lead_in_axioma_core`.
+
+4. Preparar el siguiente workflow (Agencia de Viajes o Inmobiliaria).
+   - Duplicar estructura base.
+   - Adaptar prompts y nodos.
+   - Definir herramientas específicas si son necesarias.
+
+Con esto dejaremos el sistema listo para pruebas con clientes reales.
+
+
+
 <!-- Próximas entradas aquí -->
